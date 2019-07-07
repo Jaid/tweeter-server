@@ -2,7 +2,7 @@ import EventEmitter from "events"
 
 import logger from "lib/logger"
 
-import "src/startDate"
+import "lib/startDate"
 
 class Core extends EventEmitter {
 

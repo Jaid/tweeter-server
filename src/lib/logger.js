@@ -1,16 +1,8 @@
-import essentialConfig from "essential-config"
-import logger from "lib/logger"
+import jaidLogger from "jaid-logger"
 
-import defaults from "./defaults.yml"
+const logger = jaidLogger(_PKG_TITLE)
 
-const config = essentialConfig(_PKG_TITLE, {
-  defaults,
-})
+logger.info(`${_PKG_TITLE} v${_PKG_VERSION}`)
 
-if (!config) {
-  logger.warn("Set up default config, please edit and restart")
-  process.exit(2)
-}
-
-export const appFolder = config.appFolder
-export default config.config
+export const log = logger.info
+export default logger

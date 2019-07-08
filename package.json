@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "author": "Jaid <jaid.jsx@gmail.com> (https://github.com/Jaid)",
   "dependencies": {
-    "@babel/runtime": "^7.5.1",
+    "@babel/runtime": "^7.5.2",
     "essential-config": "^3.0.1",
     "jaid-logger": "^1.4.0",
     "lodash": "^4.17.11"
@@ -18,8 +18,8 @@
     "eslint-config-jaid": "^1.18.0",
     "jest": "^24.8.0",
     "rimraf": "^2.6.3",
-    "webpack": "^4.35.2",
-    "webpack-config-jaid": "^5.21.1"
+    "webpack": "^4.35.3",
+    "webpack-config-jaid": "^5.22.0"
   },
   "scripts": {
     "clean": "rimraf dist/",

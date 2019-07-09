@@ -5,10 +5,10 @@
   "version": "0.1.0",
   "author": "Jaid <jaid.jsx@gmail.com> (https://github.com/Jaid)",
   "dependencies": {
-    "@babel/runtime": "^7.5.2",
+    "@babel/runtime": "^7.5.4",
     "essential-config": "^3.0.1",
     "jaid-logger": "^1.4.0",
-    "lodash": "^4.17.11"
+    "lodash": "^4.17.13"
   },
   "devDependencies": {
     "acorn": "^6.2.0",

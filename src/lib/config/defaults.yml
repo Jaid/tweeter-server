@@ -1,1 +1,3 @@
-example: 123
+protocol: https
+host: localhost
+port: 18888

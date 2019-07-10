@@ -8,8 +8,6 @@ const config = essentialConfig(_PKG_TITLE, {
   sensitiveKeys: [
     "twitterConsumerKey",
     "twitterConsumerSecret",
-    "twitterAccessToken",
-    "twitterAccessSecret",
     "apiUser",
   ],
 })

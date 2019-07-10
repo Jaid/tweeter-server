@@ -10,7 +10,7 @@ const config = essentialConfig(_PKG_TITLE, {
     "twitterConsumerSecret",
     "twitterAccessToken",
     "twitterAccessSecret",
-    "apiLogin",
+    "apiUser",
   ],
 })
 

@@ -7,6 +7,11 @@ import express from "express"
 
 const app = express()
 http.createServer(app).listen(config.apiPort)
-https.createServer(app).listen(config.apiSslPort)
+logger.info("Started HTTP server on port %s", config.apiPort)
+
+if (config.apiSslPort) {
+  https.createServer(app).listen(config.apiSslPort)
+  logger.info("Started HTTPS server on port %s", config.apiSslPort)
+}
 
 export default app

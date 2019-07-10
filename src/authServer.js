@@ -44,6 +44,7 @@ class AuthServer {
     app.get("/done", (request, response) => {
       response.send("Done.")
     })
+    logger.info("Started authServer")
   }
 
 }

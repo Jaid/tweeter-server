@@ -36,11 +36,14 @@ class Api {
       const apiUser = this.getApiUser(request.body.apiUser, request.body.apiKey)
       if (!apiUser) {
         response.send("Invalid API User")
+        logger.warn("Someone tried to send a tweet with user %s and key %s", request.body.apiUser, request.body.apiKey)
         return
       }
+      logger.info("[User %s] @%s: %s", request.body.apiUser, request.body.handle, request.body.text)
       const tweetResult = await twitterClient.tweet(request.body.handle.toLowerCase(), request.body.text)
       response.send(tweetResult.statusMessage)
     })
+    logger.info("Started API server")
   }
 
 }

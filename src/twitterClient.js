@@ -35,6 +35,7 @@ class TwitterClient {
       return fsp.readYaml(file)
     })
     this.users = await Promise.all(loadUsersJobs)
+    logger.info("Started twitterClient with %s users", this.users.length)
   }
 
   getUserByInternalId(id) {

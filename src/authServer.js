@@ -31,7 +31,7 @@ class AuthServer {
       })
       const responseBody = gotResponse.body |> queryString.parse
       const internalId = responseBody.screen_name.toLowerCase()
-      const outputPath = path.join(logger.appFolder, "credentials", `${internalId}.yml`)
+      const outputPath = path.join(twitterClient.usersFolder, `${internalId}.yml`)
       await fsp.outputYaml(outputPath, {
         internalId,
         id: responseBody.user_id,

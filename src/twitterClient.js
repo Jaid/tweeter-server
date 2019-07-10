@@ -1,17 +1,15 @@
 import crypto from "crypto"
+import path from "path"
 
 import got from "got"
 import config from "lib/config"
 import logger from "lib/logger"
 import Oauth from "oauth-1.0a"
 import queryString from "query-string"
+import globby from "globby"
+import fsp from "@absolunet/fsp"
 
-const hash_function = (base_string, key) => {
-  return crypto
-    .createHmac("sha1", key)
-    .update(base_string)
-    .digest("base64")
-}
+const hash_function = (text, key) => crypto.createHmac("sha1", key).update(text).digest("base64")
 
 class TwitterClient {
 
@@ -24,21 +22,35 @@ class TwitterClient {
       },
       signature_method: "HMAC-SHA1",
     })
+    this.usersFolder = path.join(logger.appFolder, "credentials")
   }
 
   async init() {
+    const userFiles = await globby("*.yml", {
+      cwd: this.usersFolder,
+      absolute: true,
+    })
+    const loadUsersJobs = userFiles.map(async file => {
+      return fsp.readYaml(file)
+    })
+    this.users = await Promise.all(loadUsersJobs)
   }
 
-  async signGot(options) {
+  getUserByInternalId(id) {
+    return this.users.find(({internalId}) => internalId === id)
+  }
+
+  async signGot(options, oauthToken) {
     options = {
       method: "POST",
       ...options,
     }
-    const signedOauthRequest = this.client.authorize(options)
+    const signedOauthRequest = this.client.authorize(options, oauthToken)
     return got(options.url, {
       method: options.method,
-      form: signedOauthRequest,
+      form: options.data,
       headers: this.client.toHeader(signedOauthRequest),
+      throwHttpErrors: false,
     })
   }
 
@@ -51,6 +63,22 @@ class TwitterClient {
     }
     const requestTokenRequest = await this.signGot(requestOptions)
     return requestTokenRequest.body |> queryString.parse
+  }
+
+  async tweet(internalId, text) {
+    const user = this.getUserByInternalId(internalId)
+    if (!user) {
+      logger.error("No user found with internalId %s", internalId)
+      return
+    }
+    const token = {
+      key: user.oauthToken,
+      secret: user.oauthTokenSecret,
+    }
+    const url = `https://api.twitter.com/1.1/statuses/update.json?${queryString.stringify({
+      status: text,
+    })}`
+    return this.signGot({url}, token)
   }
 
 }

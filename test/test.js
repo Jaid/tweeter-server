@@ -1,13 +1,10 @@
 import path from "path"
 
-const indexModule = (process.env.MAIN ? path.resolve(process.env.MAIN) : path.join(__dirname, "..", "src")) |> require
+import delay from "delay"
+import ms from "ms.macro"
 
-/**
-   * @type { import("../src") }
-   */
-const {default: tweeterServer} = indexModule
-
-it("should run", () => {
-  const result = tweeterServer()
-  expect(result).toBeGreaterThan(1549410770)
-})
+it("should run", async () => {
+  (process.env.MAIN ? path.resolve(process.env.MAIN) : path.join(__dirname, "..", "src")) |> require
+  await delay(ms`30 seconds`)
+  process.exit(0)
+}, ms`40 seconds`)

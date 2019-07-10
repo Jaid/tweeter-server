@@ -6,6 +6,7 @@ import config from "lib/config"
 import logger from "lib/logger"
 import queryString from "query-string"
 import fsp from "@absolunet/fsp"
+import app from "lib/app"
 
 import twitterClient from "./twitterClient"
 
@@ -14,12 +15,11 @@ const generateHtml = Handlebars.compile("<a href='https://api.twitter.com/oauth/
 class AuthServer {
 
   async init() {
-    this.app = express()
-    this.app.get("/login", async (request, response) => {
+    app.get("/login", async (request, response) => {
       const requestToken = await twitterClient.getRequestToken()
       response.send(generateHtml({requestToken}))
     })
-    this.app.get("/callback", async (request, response) => {
+    app.get("/callback", async (request, response) => {
       const oauthToken = request.query.oauth_token
       const oauthVerifier = request.query.oauth_verifier
       const gotResponse = await twitterClient.signGot({
@@ -41,10 +41,9 @@ class AuthServer {
       })
       response.redirect("/done")
     })
-    this.app.get("/done", (request, response) => {
+    app.get("/done", (request, response) => {
       response.send("Done.")
     })
-    this.app.listen(config.port)
   }
 
 }

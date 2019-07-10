@@ -22,12 +22,13 @@ class TwitterClient {
       },
       signature_method: "HMAC-SHA1",
     })
-    this.usersFolder = path.join(logger.appFolder, "credentials")
+    this.usersFolder = path.join(logger.appFolder, "users")
   }
 
   async init() {
-    const userFiles = await globby("*.yml", {
+    const userFiles = await globby("*/credentials.yml", {
       cwd: this.usersFolder,
+      onlyFiles: true,
       absolute: true,
     })
     const loadUsersJobs = userFiles.map(async file => {
@@ -38,6 +39,14 @@ class TwitterClient {
 
   getUserByInternalId(id) {
     return this.users.find(({internalId}) => internalId === id)
+  }
+
+  getFolderForUser(internalId) {
+    return path.join(this.usersFolder, internalId)
+  }
+
+  getCredentialsPathForUser(internalId) {
+    return path.join(this.getCredentialsPathForUser(internalId), "credentials.yml")
   }
 
   async signGot(options, oauthToken) {

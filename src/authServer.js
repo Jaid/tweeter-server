@@ -17,6 +17,11 @@ class AuthServer {
   async init() {
     app.get("/login", async (request, response) => {
       const requestToken = await twitterClient.getRequestToken()
+      if (!requestToken?.oauth_token) {
+        logger.error("Could not retrieve a token")
+        response.send("Error")
+        return
+      }
       response.send(generateHtml({requestToken}))
     })
     app.get("/callback", async (request, response) => {

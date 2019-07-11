@@ -49,7 +49,7 @@ class TwitterClient {
   }
 
   getCredentialsPathForUser(internalId) {
-    return path.join(this.getCredentialsPathForUser(internalId), "credentials.yml")
+    return path.join(this.getFolderForUser(internalId), "credentials.yml")
   }
 
   async signGot(options, oauthToken) {

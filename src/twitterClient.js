@@ -68,7 +68,7 @@ class TwitterClient {
     const requestOptions = {
       url: "https://api.twitter.com/oauth/request_token",
       data: {
-        oauth_callback: `${config.protocol}://${config.host}:${config.port}/callback`,
+        oauth_callback: `${config.protocol}://${config.host}:${config.apiPort}/callback`,
       },
     }
     const requestTokenRequest = await this.signGot(requestOptions)

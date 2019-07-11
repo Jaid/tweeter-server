@@ -25,6 +25,7 @@ class AuthServer {
       response.send(generateHtml({requestToken}))
     })
     app.get("/callback", async (request, response) => {
+      logger.debug("Calling /callback")
       const oauthToken = request.query.oauth_token
       const oauthVerifier = request.query.oauth_verifier
       const gotResponse = await twitterClient.signGot({
@@ -37,6 +38,7 @@ class AuthServer {
       const responseBody = gotResponse.body |> queryString.parse
       const internalId = responseBody.screen_name.toLowerCase()
       const outputPath = twitterClient.getCredentialsPathForUser(internalId)
+      logger.info("Saving new credentials of %s to %s", responseBody.screen_name, outputPath)
       await fsp.outputYaml(outputPath, {
         internalId,
         id: responseBody.user_id,

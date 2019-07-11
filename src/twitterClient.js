@@ -22,6 +22,7 @@ class TwitterClient {
       },
       signature_method: "HMAC-SHA1",
     })
+    this.oauthCallback = `${config.protocol}://${config.host}:${config.apiPort}/callback`
     this.usersFolder = path.join(logger.appFolder, "users")
   }
 
@@ -36,6 +37,7 @@ class TwitterClient {
     })
     this.users = await Promise.all(loadUsersJobs)
     logger.info("Started twitterClient with %s users", this.users.length)
+    logger.debug("Callback: %s", this.oauthCallback)
   }
 
   getUserByInternalId(id) {
@@ -55,6 +57,7 @@ class TwitterClient {
       method: "POST",
       ...options,
     }
+    logger.info("Signing request: %s %s", options.method, options.url)
     const signedOauthRequest = this.client.authorize(options, oauthToken)
     return got(options.url, {
       method: options.method,
@@ -68,7 +71,7 @@ class TwitterClient {
     const requestOptions = {
       url: "https://api.twitter.com/oauth/request_token",
       data: {
-        oauth_callback: `${config.protocol}://${config.host}:${config.apiPort}/callback`,
+        oauth_callback: this.oauthCallback,
       },
     }
     const requestTokenRequest = await this.signGot(requestOptions)

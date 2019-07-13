@@ -41,6 +41,9 @@ class Api {
       }
       logger.info("[User %s] @%s: %s", request.body.apiUser, request.body.handle, request.body.text)
       const tweetResult = await twitterClient.tweet(request.body.handle.toLowerCase(), request.body.text)
+      if (tweetResult.statusCode !== 200) {
+        logger.warn("Sending tweet may not have worked. Got %s %s", tweetResult.statusCode, tweetResult.statusMessage)
+      }
       response.send(tweetResult.statusMessage)
     })
     logger.info("Started API server")

@@ -27,6 +27,7 @@ class Api {
 
   async init() {
     app.post("/tweet", bodyParser.json(), async (request, response) => {
+      logger.debug("Got post data with keys %s", Object.keys(request.body).join())
       for (const requiredArgument of ["text", "handle", "apiUser", "apiKey"]) {
         if (!request.body?.[requiredArgument]) {
           response.send(`body.${requiredArgument} not given`)

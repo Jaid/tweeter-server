@@ -1,9 +1,14 @@
+import path from "path"
+
 import logger from "lib/logger"
-import config from "lib/config"
+import config, {appFolder} from "lib/config"
 import app from "lib/app"
 import bodyParser from "body-parser"
 import twitterClient from "src/twitterClient"
 import ensureArray from "ensure-array"
+import dataUrls from "data-urls"
+import fsp from "@absolunet/fsp"
+import shortid from "shortid"
 
 /**
  * @typedef ApiUser
@@ -40,15 +45,21 @@ class Api {
         logger.warn("Someone tried to send a tweet with user %s and key %s", request.body.apiUser, request.body.apiKey)
         return
       }
+      const handle = request.body.handle.toLowerCase()
       if (request.body.media) {
-        logger.info("Got media")
-        const mediaParts = ensureArray(request.body.media)
-        for (const dataUrl of mediaParts) {
-          logger.debug("Media: %s", dataUrl.substring(0, 100))
+        for (const dataUrl of ensureArray(request.body.media)) {
+          const {body, mimeType} = dataUrls(dataUrl)
+          const size = body.length
+          if (mimeType.type === "image") {
+            const mediaId = shortid()
+            const mediaFolder = path.join(appFolder, "cache", handle, mediaId)
+            await fsp.outputFile(path.join(mediaFolder, "image.png"), body)
+            logger.info("Saved media %s, %s bytes", mediaId, size)
+          }
         }
       }
-      logger.info("[User %s] @%s: %s", request.body.apiUser, request.body.handle, request.body.text)
-      const tweetResult = await twitterClient.tweet(request.body.handle.toLowerCase(), request.body.text)
+      logger.info("[User %s] @%s: %s", request.body.apiUser, handle, request.body.text)
+      const tweetResult = await twitterClient.tweet(handle, request.body.text)
       if (tweetResult.statusCode !== 200) {
         logger.warn("Sending tweet may not have worked. Got %s %s", tweetResult.statusCode, tweetResult.statusMessage)
       }

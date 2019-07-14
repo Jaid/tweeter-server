@@ -40,6 +40,7 @@ class Api {
         return
       }
       if (request.body.media) {
+        logger.info("Got media")
         const mediaParts = ensureArray(request.body.media)
         for (const dataUrl of mediaParts) {
           logger.debug("Media: %s", dataUrl.substring(0, 100))

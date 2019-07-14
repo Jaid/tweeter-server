@@ -17,6 +17,7 @@
     "got": "^9.6.0",
     "handlebars": "^4.1.2",
     "jaid-logger": "^1.4.0",
+    "jimp": "^0.6.4",
     "lodash": "^4.17.14",
     "pify": "^4.0.1",
     "query-string": "^6.8.1",

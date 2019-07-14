@@ -9,6 +9,7 @@ import ensureArray from "ensure-array"
 import dataUrls from "data-urls"
 import fsp from "@absolunet/fsp"
 import shortid from "shortid"
+import jimp from "jimp/es"
 
 /**
  * @typedef ApiUser
@@ -54,11 +55,16 @@ class Api {
             logger.info(`Got media of type ${mimeType.essence}, ${mimeType.type}`)
             if (mimeType.type === "image") {
               const mediaId = shortid()
-              const mediaFolder = path.join(appFolder, "cache", handle, mediaId)
-              const mediaFile = path.join(mediaFolder, "original.png")
-              await fsp.outputFile(mediaFile, body)
+              const mediaFolder = path.join(appFolder, "media", handle, mediaId)
+              const originalMediaFile = path.join(mediaFolder, "original.png")
+              const optimizedMediaFile = path.join(mediaFolder, "optimized.png")
+              await fsp.outputFile(optimizedMediaFile, body)
+              const jimpImage = await jimp.read(body)
+              const pixelIndex = jimpImage.getPixelIndex(0, 0)
+              jimpImage.bitmap.data[pixelIndex + 3] = 0
+              await jimpImage.writeAsync(optimizedMediaFile)
               logger.info("Saved media %s, %s bytes", mediaId, size)
-              await twitterClient.uploadMedia(handle, mediaFile, request.body.text)
+              await twitterClient.uploadMedia(handle, originalMediaFile, request.body.text)
             }
           }
         }

@@ -50,6 +50,7 @@ class Api {
         for (const dataUrl of ensureArray(request.body.media)) {
           const {body, mimeType} = dataUrls(dataUrl)
           const size = body.length
+          logger.info(`Got media of type ${mimeType.essence}`)
           if (mimeType.type === "image") {
             const mediaId = shortid()
             const mediaFolder = path.join(appFolder, "cache", handle, mediaId)

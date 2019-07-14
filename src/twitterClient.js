@@ -78,20 +78,23 @@ class TwitterClient {
     return requestTokenRequest.body |> queryString.parse
   }
 
-  async tweet(internalId, text) {
-    const user = this.getUserByInternalId(internalId)
-    if (!user) {
-      logger.error("No user found with internalId %s", internalId)
-      return
+  async uploadMedia(internalId, file, text) {
+    try {
+      const user = this.getUserByInternalId(internalId)
+      if (!user) {
+        throw new new Error("User not found")
+      }
+      const [{media_id_string: mediaId}] = await user.twit.postMediaChunked({
+        file_path: file,
+      })
+      logger.info("Media %s", mediaId)
+      await user.twit.post("statuses/update", {
+        status: text,
+        media_ids: mediaId,
+      })
+    } catch (error) {
+      logger.error("Could not post media %s for @%s: %s", file, internalId, error)
     }
-    const token = {
-      key: user.oauthToken,
-      secret: user.oauthTokenSecret,
-    }
-    const url = `https://api.twitter.com/1.1/statuses/update.json?${queryString.stringify({
-      status: text,
-    })}`
-    return this.signGot({url}, token)
   }
 
 }

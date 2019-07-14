@@ -10,8 +10,9 @@ class Core extends EventEmitter {
 
   async init() {
     await twitterClient.init()
-    await authServer.init()
-    await api.init()
+    // await authServer.init()
+    // await api.init()
+    await twitterClient.uploadMedia("twitchchen", "E:/background.png")
   }
 
 }

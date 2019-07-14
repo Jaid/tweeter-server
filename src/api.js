@@ -55,7 +55,7 @@ class Api {
             if (mimeType.type === "image") {
               const mediaId = shortid()
               const mediaFolder = path.join(appFolder, "cache", handle, mediaId)
-              await fsp.outputFile(path.join(mediaFolder, "image.png"), body)
+              await fsp.outputFile(path.join(mediaFolder, "original.png"), body)
               logger.info("Saved media %s, %s bytes", mediaId, size)
             }
           }

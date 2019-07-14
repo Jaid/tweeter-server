@@ -17,5 +17,5 @@ if (!config) {
   process.exit(2)
 }
 
-export const appFolder = config.appFolder
+export const appFolder = config.configFolder
 export default config.config

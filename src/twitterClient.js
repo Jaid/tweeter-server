@@ -1,27 +1,25 @@
-import crypto from "crypto"
 import path from "path"
 
-import got from "got"
 import config from "lib/config"
 import logger from "lib/logger"
-import Oauth from "oauth-1.0a"
-import queryString from "query-string"
 import globby from "globby"
 import fsp from "@absolunet/fsp"
+import Twit from "twit"
+import pify from "pify"
 
-const hash_function = (text, key) => crypto.createHmac("sha1", key).update(text).digest("base64")
+/**
+ * @typedef {Object} User
+ * @prop {string} internalId
+ * @prop {string} id
+ * @prop {string} handle
+ * @prop {string} oauthToken
+ * @prop {string} oauthTokenSecret
+ * @prop {Twit} twit
+ */
 
 class TwitterClient {
 
   constructor() {
-    this.client = new Oauth({
-      hash_function,
-      consumer: {
-        key: config.twitterConsumerKey,
-        secret: config.twitterConsumerSecret,
-      },
-      signature_method: "HMAC-SHA1",
-    })
     this.oauthCallback = `${config.protocol}://${config.host}:${config.apiPort}/callback`
     this.usersFolder = path.join(logger.appFolder, "users")
   }
@@ -33,8 +31,23 @@ class TwitterClient {
       absolute: true,
     })
     const loadUsersJobs = userFiles.map(async file => {
-      return fsp.readYaml(file)
+      const user = await fsp.readYaml(file)
+      const twit = new Twit({
+        access_token: user.oauthToken,
+        access_token_secret: user.oauthTokenSecret,
+        consumer_key: config.twitterConsumerKey,
+        consumer_secret: config.twitterConsumerSecret,
+      })
+      user.twit = pify(twit, {
+        multiArgs: true,
+        include: ["postMediaChunked"],
+        excludeMain: true,
+      })
+      return user
     })
+    /**
+     * @type {User[]}
+     */
     this.users = await Promise.all(loadUsersJobs)
     logger.info("Started twitterClient with %s users", this.users.length)
     logger.debug("Callback: %s", this.oauthCallback)
@@ -52,30 +65,18 @@ class TwitterClient {
     return path.join(this.getFolderForUser(internalId), "credentials.yml")
   }
 
-  async signGot(options, oauthToken) {
-    options = {
-      method: "POST",
-      ...options,
+  async tweet(internalId, text) {
+    try {
+      const user = this.getUserByInternalId(internalId)
+      if (!user) {
+        throw new new Error("User not found")
+      }
+      await user.twit.post("statuses/update", {
+        status: text,
+      })
+    } catch (error) {
+      logger.error("Could not tweet for @%s: %s", internalId, error)
     }
-    logger.info("Signing request: %s %s", options.method, options.url)
-    const signedOauthRequest = this.client.authorize(options, oauthToken)
-    return got(options.url, {
-      method: options.method,
-      form: options.data,
-      headers: this.client.toHeader(signedOauthRequest),
-      throwHttpErrors: false,
-    })
-  }
-
-  async getRequestToken() {
-    const requestOptions = {
-      url: "https://api.twitter.com/oauth/request_token",
-      data: {
-        oauth_callback: this.oauthCallback,
-      },
-    }
-    const requestTokenRequest = await this.signGot(requestOptions)
-    return requestTokenRequest.body |> queryString.parse
   }
 
   async uploadMedia(internalId, file, text) {

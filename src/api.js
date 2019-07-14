@@ -35,7 +35,7 @@ class Api {
       try {
         logger.debug("Got post data with keys %s", Object.keys(request.body).join())
         for (const requiredArgument of ["text", "handle", "apiUser", "apiKey"]) {
-          if (!request.body?.[requiredArgument]) {
+          if (!request.body?.hasOwnProperty(requiredArgument)) {
             response.send(`body.${requiredArgument} not given`)
             return
           }

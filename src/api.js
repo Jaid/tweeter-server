@@ -39,6 +39,12 @@ class Api {
         logger.warn("Someone tried to send a tweet with user %s and key %s", request.body.apiUser, request.body.apiKey)
         return
       }
+      if (request.body.media) {
+        const mediaParts = ensureArray(request.body.media)
+        for (const dataUrl of mediaParts) {
+          logger.debug("Media: %s", dataUrl.substring(0, 100))
+        }
+      }
       logger.info("[User %s] @%s: %s", request.body.apiUser, request.body.handle, request.body.text)
       const tweetResult = await twitterClient.tweet(request.body.handle.toLowerCase(), request.body.text)
       if (tweetResult.statusCode !== 200) {

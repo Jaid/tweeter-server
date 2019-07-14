@@ -9,7 +9,6 @@ import ensureArray from "ensure-array"
 import dataUrls from "data-urls"
 import fsp from "@absolunet/fsp"
 import shortid from "shortid"
-import jimp from "jimp/es"
 
 /**
  * @typedef ApiUser
@@ -32,7 +31,7 @@ class Api {
   }
 
   async init() {
-    app.post("/tweet", bodyParser.json(), async (request, response) => {
+    app.post("/tweet", bodyParser.json({limit: "20mb"}), async (request, response) => {
       try {
         logger.debug("Got post data with keys %s", Object.keys(request.body).join())
         for (const requiredArgument of ["text", "handle", "apiUser", "apiKey"]) {
@@ -56,24 +55,18 @@ class Api {
             if (mimeType.type === "image") {
               const mediaId = shortid()
               const mediaFolder = path.join(appFolder, "media", handle, mediaId)
-              const originalMediaFile = path.join(mediaFolder, "original.png")
-              const optimizedMediaFile = path.join(mediaFolder, "optimized.png")
-              await fsp.outputFile(optimizedMediaFile, body)
-              const jimpImage = await jimp.read(body)
-              const pixelIndex = jimpImage.getPixelIndex(0, 0)
-              jimpImage.bitmap.data[pixelIndex + 3] = 0
-              await jimpImage.writeAsync(optimizedMediaFile)
-              logger.info("Saved media %s, %s bytes", mediaId, size)
-              await twitterClient.uploadMedia(handle, originalMediaFile, request.body.text)
+              const mediaFile = path.join(mediaFolder, "original.png")
+              await fsp.outputFile(mediaFile, body)
+              logger.info("Saved media %s, %s bytes", mediaFile, size)
+              await twitterClient.uploadMedia(handle, mediaFile, request.body.text)
+              response.send("Yes")
+              return
             }
           }
         }
         logger.info("[User %s] @%s: %s", request.body.apiUser, handle, request.body.text)
-        const tweetResult = await twitterClient.tweet(handle, request.body.text)
-        if (tweetResult.statusCode !== 200) {
-          logger.warn("Sending tweet may not have worked. Got %s %s", tweetResult.statusCode, tweetResult.statusMessage)
-        }
-        response.send(tweetResult.statusMessage)
+        await twitterClient.tweet(handle, request.body.text)
+        response.send({status: "Yes"})
       } catch (error) {
         logger.error("Could not handle /tweet request: %s", error)
       }

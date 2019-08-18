@@ -1,11 +1,13 @@
 import path from "path"
+import crypto from "crypto"
 
-import config from "lib/config"
-import logger from "lib/logger"
+import {config, logger, got} from "src/core"
 import globby from "globby"
 import fsp from "@absolunet/fsp"
 import Twit from "twit"
 import pify from "pify"
+import OauthClient from "oauth-1.0a"
+import queryString from "query-string"
 
 /**
  * @typedef {Object} User
@@ -17,14 +19,23 @@ import pify from "pify"
  * @prop {Twit} twit
  */
 
+const oauthHasher = (text, key) => crypto.createHmac("sha1", key).update(text).digest("base64")
+
 class TwitterClient {
 
   constructor() {
-    this.oauthCallback = `${config.protocol}://${config.host}:${config.apiPort}/callback`
     this.usersFolder = path.join(logger.appFolder, "users")
   }
 
   async init() {
+    this.oauthClient = new OauthClient({
+      hash_function: oauthHasher,
+      consumer: {
+        key: config.twitterConsumerKey,
+        secret: config.twitterConsumerSecret,
+      },
+      signature_method: "HMAC-SHA1",
+    })
     const userFiles = await globby("*/credentials.yml", {
       cwd: this.usersFolder,
       onlyFiles: true,
@@ -50,7 +61,7 @@ class TwitterClient {
      */
     this.users = await Promise.all(loadUsersJobs)
     logger.info("Started twitterClient with %s users", this.users.length)
-    logger.debug("Callback: %s", this.oauthCallback)
+    logger.debug("Callback: %s", config.callbackUrl)
   }
 
   getUserByInternalId(id) {
@@ -63,6 +74,33 @@ class TwitterClient {
 
   getCredentialsPathForUser(internalId) {
     return path.join(this.getFolderForUser(internalId), "credentials.yml")
+  }
+
+  /**
+   * @return {Promise<Object>}
+   */
+  async getRequestToken() {
+    const requestOptions = {
+      url: "https://api.twitter.com/oauth/request_token",
+      data: {
+        oauth_callback: config.callbackUrl,
+      },
+    }
+    const response = await this.signGot(requestOptions)
+    return queryString.parse(response.body)
+  }
+
+  async signGot(options, oauthToken) {
+    options = {
+      method: "POST",
+      ...options,
+    }
+    const signedOauthRequest = this.oauthClient.authorize(options, oauthToken)
+    return got(options.url, {
+      method: options.method,
+      form: options.data,
+      headers: this.oauthClient.toHeader(signedOauthRequest),
+    })
   }
 
   async tweet(internalId, text) {

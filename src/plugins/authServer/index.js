@@ -38,7 +38,6 @@ export default class AuthServer {
    * @return {Promise<void>}
    */
   async handleCallback(context) {
-    debugger
     const oauthToken = context.query.oauth_token
     const oauthVerifier = context.query.oauth_verifier
     const gotResponse = await twitterClient.signGot({

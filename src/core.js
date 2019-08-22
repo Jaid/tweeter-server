@@ -14,6 +14,7 @@ const core = new JaidCore({
     ],
     defaults: {
       callbackUrl: "https://twitter.example.com/callback",
+      apiPayloadLimit: "20mb",
     },
   },
 })
@@ -31,6 +32,7 @@ const core = new JaidCore({
  * @prop {string} twitterConsumerSecret
  * @prop {ApiUser|ApiUser[]} apiUser
  * @prop {string} callbackUrl
+ * @prop {string} apiPayloadLimit
  */
 
 /**

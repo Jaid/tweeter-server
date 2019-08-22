@@ -1,13 +1,13 @@
 import path from "path"
 
 import {config, koa, logger, appFolder} from "src/core"
-import bodyParser from "koa-bodyparser"
 import ensureArray from "ensure-array"
 import dataUrls from "data-urls"
 import fsp from "@absolunet/fsp"
 import shortid from "shortid"
 import {router} from "fast-koa-router"
 import twitterClient from "src/plugins/twitterClient"
+import bodyParser from "lib/bodyParser"
 
 export default class ApiServer {
 
@@ -25,7 +25,7 @@ export default class ApiServer {
   async init() {
     const routes = {
       post: {
-        "/tweet": [bodyParser(), this.handleTweet.bind(this)],
+        "/tweet": [bodyParser, this.handleTweet.bind(this)],
       },
     }
     koa.use(router(routes))

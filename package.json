@@ -27,7 +27,7 @@
   "devDependencies": {
     "acorn": "^7.0.0",
     "babel-jest": "^24.9.0",
-    "babel-preset-jaid": "^6.9.3",
+    "babel-preset-jaid": "^6.9.4",
     "browserslist-config-jaid-node": "^2.2.2",
     "delay": "^4.3.0",
     "eslint": "^6.3.0",
@@ -36,7 +36,7 @@
     "koa": "^2.8.1",
     "rimraf": "^3.0.0",
     "webpack": "^4.39.3",
-    "webpack-config-jaid": "^5.27.8"
+    "webpack-config-jaid": "^5.27.9"
   },
   "scripts": {
     "clean": "rimraf dist/",

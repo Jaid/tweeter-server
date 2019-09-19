@@ -1,4 +1,4 @@
-import core, {koa, logger} from "src/core"
+import core, {logger} from "src/core"
 import queryString from "query-string"
 import fsp from "@absolunet/fsp"
 import {router} from "fast-koa-router"
@@ -17,7 +17,7 @@ export default class AuthServer {
         "/done": this.handleDone,
       },
     }
-    koa.use(router(routes))
+    this.koa.use(router(routes))
   }
 
   /**

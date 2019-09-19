@@ -1,6 +1,6 @@
 import path from "path"
 
-import {config, koa, logger, appFolder} from "src/core"
+import core, {config, logger, appFolder} from "src/core"
 import ensureArray from "ensure-array"
 import dataUrls from "data-urls"
 import fsp from "@absolunet/fsp"
@@ -28,7 +28,7 @@ export default class ApiServer {
         "/tweet": [bodyParser, this.handleTweet.bind(this)],
       },
     }
-    koa.use(router(routes))
+    core.koa.use(router(routes))
   }
 
   /**

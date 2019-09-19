@@ -1,7 +1,7 @@
 import path from "path"
 import crypto from "crypto"
 
-import {config, logger, got} from "src/core"
+import core, {config, logger} from "src/core"
 import globby from "globby"
 import fsp from "@absolunet/fsp"
 import Twit from "twit"
@@ -96,7 +96,7 @@ class TwitterClient {
       ...options,
     }
     const signedOauthRequest = this.oauthClient.authorize(options, oauthToken)
-    return got(options.url, {
+    return core.got(options.url, {
       method: options.method,
       form: options.data,
       headers: this.oauthClient.toHeader(signedOauthRequest),

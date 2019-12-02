@@ -51,5 +51,6 @@
     "test:debug": "npm run start",
     "prepareActionJest": "npm run build:prod"
   },
-  "name": "tweeter-server"
+  "name": "tweeter-server",
+  "description": "Sends tweets."
 }

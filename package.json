@@ -53,5 +53,9 @@
   },
   "name": "tweeter-server",
   "description": "Sends tweets.",
-  "funding": "https://github.com/sponsors/jaid"
+  "funding": "https://github.com/sponsors/jaid",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jaid/tweeter-server"
+  }
 }

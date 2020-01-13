@@ -52,5 +52,6 @@
     "prepareActionJest": "npm run build:prod"
   },
   "name": "tweeter-server",
-  "description": "Sends tweets."
+  "description": "Sends tweets.",
+  "funding": "https://github.com/sponsors/jaid"
 }

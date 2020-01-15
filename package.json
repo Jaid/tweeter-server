@@ -21,7 +21,8 @@
     "pify": "^4.0.1",
     "query-string": "^6.9.0",
     "shortid": "^2.2.15",
-    "twit": "^2.2.11"
+    "twit": "^2.2.11",
+    "yargs": "^15.1.0"
   },
   "devDependencies": {
     "acorn": "^7.1.0",

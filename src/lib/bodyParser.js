@@ -1,4 +1,5 @@
 import bodyParser from "koa-bodyparser"
+
 import {config} from "src/core"
 
 export default bodyParser({

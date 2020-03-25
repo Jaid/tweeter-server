@@ -1,7 +1,8 @@
-import core, {logger} from "src/core"
-import queryString from "query-string"
 import fsp from "@absolunet/fsp"
 import {router} from "fast-koa-router"
+import queryString from "query-string"
+
+import core, {logger} from "src/core"
 import twitterClient from "src/plugins/twitterClient"
 
 import generateHtml from "./login.hbs"

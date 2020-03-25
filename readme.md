@@ -78,4 +78,4 @@ npm run test
 
 ## License
 [MIT License](https://raw.githubusercontent.com/jaid/tweeter-server/master/license.txt)  
-Copyright © 2019, Jaid \<jaid.jsx@gmail.com> (github.com/jaid)
+Copyright © 2020, Jaid \<jaid.jsx@gmail.com> (https://github.com/jaid)

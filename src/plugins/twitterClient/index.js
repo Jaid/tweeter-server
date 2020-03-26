@@ -107,7 +107,7 @@ class TwitterClient {
     try {
       const user = this.getUserByInternalId(internalId)
       if (!user) {
-        throw new new Error("User not found")
+        throw new Error("User not found")
       }
       await user.twit.post("statuses/update", {
         status: text,
@@ -121,7 +121,7 @@ class TwitterClient {
     try {
       const user = this.getUserByInternalId(internalId)
       if (!user) {
-        throw new new Error("User not found")
+        throw new Error("User not found")
       }
       const [{media_id_string: mediaId}] = await user.twit.postMediaChunked({
         file_path: file,

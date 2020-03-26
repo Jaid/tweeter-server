@@ -7,12 +7,12 @@ import shortid from "shortid"
 
 import bodyParser from "lib/bodyParser"
 
-import core, {appFolder, config, logger} from "src/core"
+import core, {appFolder, logger} from "src/core"
 import twitterClient from "src/plugins/twitterClient"
 
 export default class ApiServer {
 
-  constructor() {
+  handleConfig(config) {
     /**
      * @type {ApiUser[]}
      */
@@ -54,6 +54,7 @@ export default class ApiServer {
     for (const requiredArgument of ["text", "handle", "apiUser", "apiKey"]) {
       context.assert(requestBody?.hasOwnProperty(requiredArgument), 400, `body.${requiredArgument} not given`)
     }
+    debugger
     const apiUser = this.getApiUser(requestBody.apiUser, requestBody.apiKey)
     context.assert(apiUser, 400, "Invalid API User")
     const handle = requestBody.handle.toLowerCase()

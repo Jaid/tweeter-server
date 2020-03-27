@@ -54,7 +54,6 @@ export default class ApiServer {
     for (const requiredArgument of ["text", "handle", "apiUser", "apiKey"]) {
       context.assert(requestBody?.hasOwnProperty(requiredArgument), 400, `body.${requiredArgument} not given`)
     }
-    debugger
     const apiUser = this.getApiUser(requestBody.apiUser, requestBody.apiKey)
     context.assert(apiUser, 400, "Invalid API User")
     const handle = requestBody.handle.toLowerCase()
@@ -68,8 +67,8 @@ export default class ApiServer {
           const mediaFolder = path.join(appFolder, "media", handle, mediaId)
           const mediaFile = path.join(mediaFolder, "original.png")
           await fsp.outputFile(mediaFile, body)
-          logger.info("Saved media %s, %s bytes", mediaFile, size)
-          await twitterClient.uploadMedia(handle, mediaFile, body.text)
+          logger.debug("Saved media %s, %s bytes", mediaFile, size)
+          await twitterClient.uploadMedia(handle, mediaFile, requestBody.text)
           context.body = {status: "OK"}
           return
         }

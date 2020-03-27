@@ -1,6 +1,7 @@
 import fsp from "@absolunet/fsp"
 import crypto from "crypto"
 import globby from "globby"
+import hasContent from "has-content"
 import OauthClient from "oauth-1.0a"
 import path from "path"
 import pify from "pify"
@@ -126,7 +127,10 @@ class TwitterClient {
       const [{media_id_string: mediaId}] = await user.twit.postMediaChunked({
         file_path: file,
       })
-      logger.info("Media %s", mediaId)
+      logger.debug("Media %s", mediaId)
+      if (hasContent(text)) {
+        logger.debug(`Text: ${text}`)
+      }
       await user.twit.post("statuses/update", {
         status: text,
         media_ids: mediaId,

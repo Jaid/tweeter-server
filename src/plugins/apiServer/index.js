@@ -7,8 +7,6 @@ import koaBodyparser from "koa-bodyparser"
 import path from "path"
 import shortid from "shortid"
 
-import getBodyParser from "lib/getBodyParser"
-
 import core, {appFolder, logger} from "src/core"
 import twitterClient from "src/plugins/twitterClient"
 

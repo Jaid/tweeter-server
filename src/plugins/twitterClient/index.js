@@ -66,7 +66,8 @@ class TwitterClient {
   }
 
   getUserByInternalId(id) {
-    return this.users.find(({internalId}) => internalId === id)
+    const idNormalized = String(id).toLowerCase()
+    return this.users.find(({internalId}) => internalId === idNormalized)
   }
 
   getFolderForUser(internalId) {

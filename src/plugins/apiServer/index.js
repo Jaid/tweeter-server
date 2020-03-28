@@ -3,10 +3,11 @@ import dataUrls from "data-urls"
 import ensureArray from "ensure-array"
 import {router} from "fast-koa-router"
 import hasContent from "has-content"
+import koaBodyparser from "koa-bodyparser"
 import path from "path"
 import shortid from "shortid"
 
-import bodyParser from "lib/bodyParser"
+import getBodyParser from "lib/getBodyParser"
 
 import core, {appFolder, logger} from "src/core"
 import twitterClient from "src/plugins/twitterClient"
@@ -22,11 +23,18 @@ export default class ApiServer {
       consumer_key: config.twitterConsumerKey,
       consumer_secret: config.twitterConsumerSecret,
     }
+    this.apiPayloadLimit = config.apiPayloadLimit
   }
 
   async init() {
     const auth = this.auth.bind(this)
     const getCredentials = this.getCredentials.bind(this)
+    const bodyParser = koaBodyparser({
+      formLimit: this.apiPayloadLimit,
+      textLimit: this.apiPayloadLimit,
+      jsonLimit: this.apiPayloadLimit,
+      strict: false,
+    })
     const routes = {
       post: {
         "/tweet": [bodyParser, auth, this.handleTweet.bind(this)],

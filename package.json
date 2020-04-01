@@ -14,7 +14,7 @@
     "flatted": "^2.0.2",
     "globby": "^11.0.0",
     "got": "^10.7.0",
-    "handlebars": "^4.7.3",
+    "handlebars": "^4.7.4",
     "has-content": "^1.1.1",
     "jaid-core": "^7.5.0",
     "koa": "^2.11.0",

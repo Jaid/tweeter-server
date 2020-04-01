@@ -4,7 +4,6 @@ import {router} from "fast-koa-router"
 import hasContent from "has-content"
 import koaBodyparser from "koa-bodyparser"
 import path from "path"
-import shortid from "shortid"
 
 import core, {appFolder, logger} from "src/core"
 import twitterClient from "src/plugins/twitterClient"
@@ -89,6 +88,26 @@ export default class ApiServer {
    */
   async getCredentials(context) {
     const handle = context.request.body.handle
+    if (!handle) {
+      const userEntries = twitterClient.users.map(user => {
+        return [
+          user.handle.toLowerCase(),
+          {
+            access_token: user.oauthToken,
+            access_token_secret: user.oauthTokenSecret,
+            id: user.id,
+            handle: user.handle,
+          },
+        ]
+      })
+      context.body = {
+        appCredentials: {
+          ...this.twitCredentials,
+        },
+        users: Object.fromEntries(userEntries),
+      }
+      return
+    }
     const twitterUser = twitterClient.getUserByInternalId(handle)
     context.assert(twitterUser, 400, `No Twitter user found for ${handle}`)
     context.body = {

@@ -1,11 +1,16 @@
 import fsp from "@absolunet/fsp"
 import crypto from "crypto"
+import dataUrls from "data-urls"
+import ensureArray from "ensure-array"
+import filesize from "filesize"
 import globby from "globby"
 import hasContent from "has-content"
+import mimeTypes from "mime-types"
 import OauthClient from "oauth-1.0a"
 import path from "path"
 import pify from "pify"
 import queryString from "query-string"
+import tempfile from "tempfile"
 import Twit from "twit"
 
 import core, {config, logger} from "src/core"
@@ -105,15 +110,31 @@ class TwitterClient {
     })
   }
 
-  async tweet(internalId, text) {
+  async tweet(internalId, text, media) {
     try {
       const user = this.getUserByInternalId(internalId)
       if (!user) {
         throw new Error("User not found")
       }
-      await user.twit.post("statuses/update", {
+      const postOptions = {
         status: text,
-      })
+      }
+      if (hasContent(media)) {
+        const base64Files = ensureArray(media)
+        const jobs = base64Files.map(async base64File => {
+          const {body, mimeType} = dataUrls(base64File)
+          const suffix = mimeTypes.extension(mimeType.essence)
+          const file = tempfile(`.${suffix}`)
+          await fsp.outputFile(file, body)
+          const [{media_id_string: mediaId}] = await user.twit.postMediaChunked({
+            file_path: file,
+          })
+          logger.debug(`Wrote ${filesize(body.length)} to ${suffix} file`)
+          return mediaId
+        })
+        postOptions.media_ids = await Promise.all(jobs)
+      }
+      await user.twit.post("statuses/update", postOptions)
     } catch (error) {
       logger.error("Could not tweet for @%s: %s", internalId, error)
     }

@@ -1,5 +1,4 @@
 import fsp from "@absolunet/fsp"
-import dataUrls from "data-urls"
 import ensureArray from "ensure-array"
 import {router} from "fast-koa-router"
 import hasContent from "has-content"
@@ -65,25 +64,8 @@ export default class ApiServer {
       context.assert(requestBody?.hasOwnProperty(requiredArgument), 400, `body.${requiredArgument} not given`)
     }
     const handle = requestBody.handle.toLowerCase()
-    if (requestBody.media) {
-      for (const dataUrl of ensureArray(requestBody.media)) {
-        const {body, mimeType} = dataUrls(dataUrl)
-        const size = body.length
-        logger.info(`Got media of type ${mimeType.essence}, ${mimeType.type}`)
-        if (mimeType.type === "image") {
-          const mediaId = shortid()
-          const mediaFolder = path.join(appFolder, "media", handle, mediaId)
-          const mediaFile = path.join(mediaFolder, "original.png")
-          await fsp.outputFile(mediaFile, body)
-          logger.debug("Saved media %s, %s bytes", mediaFile, size)
-          await twitterClient.uploadMedia(handle, mediaFile, requestBody.text)
-          context.body = {status: "OK"}
-          return
-        }
-      }
-    }
     logger.info("[User %s] @%s: %s", context.apiUser.user, handle, requestBody.text)
-    await twitterClient.tweet(handle, requestBody.text)
+    await twitterClient.tweet(handle, requestBody.text, requestBody.media)
     context.body = {status: "OK"}
   }
 

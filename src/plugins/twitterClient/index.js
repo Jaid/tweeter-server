@@ -110,6 +110,12 @@ class TwitterClient {
     })
   }
 
+  /**
+   * @param {string} internalId
+   * @param {string} text
+   * @param {string|string[]} media
+   * @return {Promise<Object>}
+   */
   async tweet(internalId, text, media) {
     try {
       const user = this.getUserByInternalId(internalId)
@@ -134,7 +140,8 @@ class TwitterClient {
         })
         postOptions.media_ids = await Promise.all(jobs)
       }
-      await user.twit.post("statuses/update", postOptions)
+      const response = await user.twit.post("statuses/update", postOptions)
+      return response.data
     } catch (error) {
       logger.error("Could not tweet for @%s: %s", internalId, error)
     }

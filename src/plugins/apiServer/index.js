@@ -64,8 +64,11 @@ export default class ApiServer {
     }
     const handle = requestBody.handle.toLowerCase()
     logger.info("[User %s] @%s: %s", context.apiUser.user, handle, requestBody.text)
-    await twitterClient.tweet(handle, requestBody.text, requestBody.media)
-    context.body = {status: "OK"}
+    const result = await twitterClient.tweet(handle, requestBody.text, requestBody.media)
+    context.body = {
+      status: "ok",
+      tweet: result,
+    }
   }
 
   /**

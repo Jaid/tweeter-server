@@ -1,11 +1,9 @@
-import fsp from "@absolunet/fsp"
 import ensureArray from "ensure-array"
 import {router} from "fast-koa-router"
 import hasContent from "has-content"
 import koaBodyparser from "koa-bodyparser"
-import path from "path"
 
-import core, {appFolder, logger} from "src/core"
+import core, {logger} from "src/core"
 import twitterClient from "src/plugins/twitterClient"
 
 export default class ApiServer {

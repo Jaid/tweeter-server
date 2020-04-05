@@ -1,5 +1,6 @@
 import ensureArray from "ensure-array"
 import {router} from "fast-koa-router"
+import flattenMultiline from "flatten-multiline"
 import hasContent from "has-content"
 import koaBodyparser from "koa-bodyparser"
 
@@ -61,7 +62,7 @@ export default class ApiServer {
       context.assert(requestBody?.hasOwnProperty(requiredArgument), 400, `body.${requiredArgument} not given`)
     }
     const handle = requestBody.handle.toLowerCase()
-    logger.info("[User %s] @%s: %s", context.apiUser.user, handle, requestBody.text)
+    logger.info("[User %s] @%s: %s", context.apiUser.user, handle, flattenMultiline(requestBody.text))
     const result = await twitterClient.tweet(handle, requestBody.text, requestBody.media)
     context.body = {
       status: "ok",

@@ -12,6 +12,7 @@
     "fast-koa-router": "^1.2.0",
     "filesize": "^6.1.0",
     "flatted": "^2.0.2",
+    "flatten-multiline": "^1.0.0",
     "globby": "^11.0.0",
     "got": "^10.7.0",
     "handlebars": "^4.7.4",

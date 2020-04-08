@@ -17,7 +17,7 @@
     "got": "^10.7.0",
     "handlebars": "^4.7.6",
     "has-content": "^1.1.1",
-    "jaid-core": "^7.5.0",
+    "jaid-core": "^8.0.0",
     "koa": "^2.11.0",
     "koa-bodyparser": "^4.3.0",
     "lodash": "^4.17.15",

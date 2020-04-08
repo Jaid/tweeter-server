@@ -8,13 +8,14 @@ const core = new JaidCore({
   useGot: true,
   configSetup: {
     secretKeys: [
-      "twitterConsumerKey",
-      "twitterConsumerSecret",
+      "twitterApp",
+      "twitterApps",
       "apiUser",
     ],
     defaults: {
       callbackUrl: "https://twitter.example.com/callback",
       apiPayloadLimit: "20mb",
+      users: {},
     },
   },
 })

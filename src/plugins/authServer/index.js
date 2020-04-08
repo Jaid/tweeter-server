@@ -13,7 +13,7 @@ export default class AuthServer {
     this.koa = core.koa
     const routes = {
       get: {
-        "/login": this.handleLogin,
+        "/": this.handleLogin,
         "/callback": this.handleCallback,
         "/done": this.handleDone,
       },
@@ -26,6 +26,9 @@ export default class AuthServer {
    * @return {Promise<void>}
    */
   async handleLogin(context) {
+    const getRequestTokenJobs = twitterClient.twitterApps.map(async twitterApp => {
+      const requestToken = twitterApp.getRequestToken()
+    })
     const requestToken = await twitterClient.getRequestToken()
     if (!requestToken?.oauth_token) {
       logger.error("Could not retrieve a token")

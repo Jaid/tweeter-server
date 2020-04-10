@@ -43,6 +43,8 @@ Create Twitter apps [here](https://apps.twitter.com).
 
 ### Access token from Twitter
 
+This method is recommended.
+
 If the developer account (= the account the Twitter app is created with) and the bot account (= the account that automatically posts tweets) are the same, the login process over `tweeter-server`'s Koa server is not needed. Instead, all keys can be specified in `secrets.yml`:
 
 ```yaml
@@ -55,6 +57,8 @@ twitterApps:
 ```
 
 ### Access token from Tweeter Server
+
+This method is no longer supported.
 
 If the developer account and the bot account are different, only specify the Twitter app's credentials in `secrets.yml`:
 

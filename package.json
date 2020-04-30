@@ -64,5 +64,16 @@
     "url": "https://github.com/jaid/tweeter-server"
   },
   "homepage": "https://github.com/Jaid/tweeter-server",
-  "keywords": []
+  "keywords": [
+    "backend",
+    "cli",
+    "server",
+    "tool",
+    "tweeter",
+    "tweets",
+    "twitter",
+    "twitter-api",
+    "twitter-app",
+    "twitter-bot"
+  ]
 }
